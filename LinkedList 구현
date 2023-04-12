@@ -1,0 +1,233 @@
+#include <iostream>
+
+using namespace std;
+
+class List
+{
+public:
+	 List() {};
+	~List() {};
+
+private:
+	struct tagNode
+	{
+		int data;
+		tagNode* next;
+	};
+
+	tagNode* pHead = NULL;		// 시작부터 끝까지 모든 노드
+	tagNode* pTail = NULL;		// 가장 마지막 노드
+
+	tagNode* pNode = NULL;		// 당장 들어오는 값을 넣는 노드
+
+	int sizeCount = 0;			// 사이즈
+
+public:
+	// 맨 앞에 데이터 추가
+	void push_front(int value)
+	{
+		sizeCount++;
+
+		// 노드 생성
+		pNode = new tagNode;			// 메모리 할당
+
+		pNode->data = value;			// 값 넣기
+		pNode->next = NULL;				// 다음 구조체가 없기 때문에 NULL로 초기화
+
+		// 머리가 없다면 = 리스트가 비었다면....
+		if (pHead == NULL)
+		{
+			pHead = pTail = pNode;		// 헤드와 테일 포인터를 첫 번째 노드로 초기화
+		}
+		else
+		{
+			pNode->next = pHead;		// 노드가 헤드를 링크로 갖도로 하고
+			pHead = pNode;				// 노드를 해드로 바꾸면 연결?
+		}
+	}
+
+	// 맨 앞의 데이터 반환
+	int front() const
+	{
+		if (pHead)
+		{
+			return pHead->data;
+		}
+		else
+		{
+			return -1000;
+		}
+	}
+
+	// 맨 앞의 값 삭제
+	void pop_front()
+	{
+		if (empty())
+		{
+			return;
+		}
+		sizeCount--;
+
+		tagNode* temp = pHead;
+
+		pHead = pHead->next;
+
+		delete temp;
+	}
+
+	// 맨 뒤에 데이터 추가
+	void push_back(int value)
+	{
+		sizeCount++;
+
+		// 노드 생성
+		pNode = new tagNode;			// 메모리 할당
+
+		pNode->data = value;			// 값 넣기
+		pNode->next = NULL;				// 다음 구조체가 없기 때문에 NULL로 초기화
+
+
+		//  꼬리가 없다면 = 리스트가 비었다면....
+		if (pTail == NULL)
+		{
+			pHead = pTail = pNode;		// 헤드와 테일 포인터를 첫 번째 노드로 초기화
+		}
+		else
+		{
+			pTail->next = pNode;		// 첫번째 노드의 next에 두번째 노드의 주소값 넣기
+			pTail = pNode;				// 테일 포인터가 두 번째 노드를 가리키도록 설정
+		}
+	}
+
+	// 맨 뒤의 데이터 반환
+	int back() const
+	{
+		if (pTail)
+		{
+			return pTail->data;
+		}
+		else
+		{
+			return -1000;
+		}
+	}
+
+	// 맨 뒤의 값 삭제
+	void pop_back()
+	{
+		if (empty())
+		{
+			return;
+		}
+
+		if (size() == 1)
+		{
+			delete pTail;
+		}
+		else
+		{
+			tagNode* temp = new tagNode;
+			temp = pHead;
+
+			// size가 1부터 시작하고 + 마지막 번호가 테일이기 때문에 -2 해줌
+			for (int i = 0; i < size() - 2; i++)
+			{
+				temp = temp->next;
+			}
+
+			delete pTail;
+
+			pTail = new tagNode;
+			pTail = temp;
+			pTail->next = NULL;
+		}
+
+		sizeCount--;
+	}
+
+	// 리스트 내의 값들을 순서대로 출력
+	void print_data()
+	{
+		if (size() == 0)
+		{
+			cout << "리스트에 인자 없음" << endl;
+			return;
+		}
+
+		tagNode* temp = pHead;	// 첫 번째 노드를 가리키도록 설정 
+		
+		do
+		{
+			cout << temp->data << endl;
+			temp = temp->next;
+		} while (temp);
+	}
+
+	// 리스트 원소 전부 삭제
+	void clear()
+	{
+		sizeCount = 0;
+		clear(pHead);
+	}
+
+	// 리스트가 비었는지 확인
+	bool empty()
+	{
+		return !pHead;
+	}
+
+	// 리스트 길이 반환
+	int size()
+	{
+		return sizeCount;
+	}
+private:
+	void clear(tagNode* temp)
+	{
+		if (temp->next)
+		{
+			clear(temp->next);
+
+			delete temp;
+			return;
+		}
+
+		delete temp;
+	}
+};
+
+struct tagNode
+{
+	int data;
+	tagNode* next;
+};
+
+int main()
+{
+	List list;
+
+	list.push_back(100);
+	list.push_back(200);
+	list.push_back(300);
+	list.push_back(400);
+
+	list.push_front(10);
+	list.push_front(20);
+	list.push_front(30);
+	list.push_front(40);
+
+	list.print_data();
+	cout << "=============" << endl;
+
+	list.pop_back();
+	list.pop_back();
+	list.pop_front();
+	list.pop_front();
+
+	list.print_data();
+	cout << "=============" << endl;
+
+	list.clear();
+
+	list.print_data();
+}
